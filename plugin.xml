@@ -1,0 +1,38 @@
+<!--
+The MIT License (MIT)
+Copyright (c) 2015 Joel De La Torriente - jjdltc - http://www.jjdltc.com/
+See a full copy of license in the root folder of the project 
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://www.jjdltc.com"
+    id="org.jjdltc.cordova.plugin.sqlite.dbFile"
+    version="0.0.1">
+    <name>JJdbFile</name>
+    <description>Connect to sqlite file and interact with it</description>
+    <author>JJDLTC - Joel De La Torriente</author>
+    <license>The MIT License (MIT)</license>    
+    <keywords>cordova,sqlite,db,sql</keywords>
+    <!-- <repo>https://github.com/jjdltc/</repo> -->
+
+    <engines>
+        <engine name="cordova" version=">=3.6.0" />
+    </engines>
+
+    <js-module src="www/JJdbFile.js" name="JJdbFile">
+        <clobbers target="JJdbFile" />
+    </js-module>
+
+    <!-- Platform ANDROID Begins -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="JJdbFile" >
+                <param name="android-package" value="org.jjdltc.cordova.plugin.sqlite.JJdbFile"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/JJdbFile.java" target-dir="src/org/jjdltc/cordova/plugin/sqlite" />
+    </platform>
+    <!-- Platform ANDROID Ends -->
+    
+</plugin>
