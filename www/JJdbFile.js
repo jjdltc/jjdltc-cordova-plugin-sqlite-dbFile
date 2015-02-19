@@ -8,37 +8,42 @@ var argscheck       = require('cordova/argscheck'),
     exec            = require('cordova/exec'),
     cordova         = require('cordova');
 
+var validateOptObj  = function(){
+
+};
+
 /**
  * @TODO Desc
  * 
  * @constructor
  */
-function JJdbFile() {
-
+function JJdbFile(path) {
+    argscheck.checkArgs('s', 'JJdbFile.constructor', arguments);
+    this.dbPath     = path || false;
 }
 
-/**
- * @TODO Desc
- */
-JJdbFile.prototype.connect = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.connect', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "connect", [options]);
-};
+// /**
+//  * Attemp to connect with the db file in the device
+//  */
+// JJdbFile.prototype.connect = function(options, successCallback, errorCallback) {
+//     argscheck.checkArgs('oFF', 'JJdbFile.connect', arguments);
+//     exec(successCallback, errorCallback, "JJdbFile", "connect", [options]);
+// };
 
-/**
- * @TODO Desc
- */
-JJdbFile.prototype.disconnect = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.disconnect', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "disconnect", [options]);
-};
+// /**
+//  * @TODO Desc
+//  */
+// JJdbFile.prototype.disconnect = function(options, successCallback, errorCallback) {
+//     argscheck.checkArgs('oFF', 'JJdbFile.disconnect', arguments);
+//     exec(successCallback, errorCallback, "JJdbFile", "disconnect", [options]);
+// };
 
 /**
  * @TODO Desc
  */
 JJdbFile.prototype.create = function(options, successCallback, errorCallback) {
     argscheck.checkArgs('oFF', 'JJdbFile.create', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "create", [options]);
+    exec(successCallback, errorCallback, "JJdbFile", "create", [options, this.dbPath]);
 }
 
 /**
@@ -73,4 +78,4 @@ JJdbFile.prototype.execute = function(options, successCallback, errorCallback) {
     exec(successCallback, errorCallback, "JJdbFile", "execute", [options]);
 }
 
-module.exports = new JJzip();
+module.exports = JJdbFile;
