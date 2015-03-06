@@ -1,0 +1,1 @@
+need to place a the queries in assets (preferred in a folder)

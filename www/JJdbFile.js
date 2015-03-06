@@ -51,7 +51,7 @@ JJdbFile.prototype.create = function(options, successCallback, errorCallback) {
  */
 JJdbFile.prototype.read = function(options, successCallback, errorCallback) {
     argscheck.checkArgs('oFF', 'JJdbFile.read', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "read", [options]);
+    exec(successCallback, errorCallback, "JJdbFile", "read", [options, this.dbPath]);
 }
 
 /**
@@ -59,7 +59,7 @@ JJdbFile.prototype.read = function(options, successCallback, errorCallback) {
  */
 JJdbFile.prototype.update = function(options, successCallback, errorCallback) {
     argscheck.checkArgs('oFF', 'JJdbFile.update', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "update", [options]);
+    exec(successCallback, errorCallback, "JJdbFile", "update", [options, this.dbPath]);
 }
 
 /**
@@ -67,7 +67,7 @@ JJdbFile.prototype.update = function(options, successCallback, errorCallback) {
  */
 JJdbFile.prototype.delete = function(options, successCallback, errorCallback) {
     argscheck.checkArgs('oFF', 'JJdbFile.delete', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "delete", [options]);
+    exec(successCallback, errorCallback, "JJdbFile", "delete", [options, this.dbPath]);
 }
 
 /**
@@ -75,7 +75,7 @@ JJdbFile.prototype.delete = function(options, successCallback, errorCallback) {
  */
 JJdbFile.prototype.execute = function(options, successCallback, errorCallback) {
     argscheck.checkArgs('oFF', 'JJdbFile.execute', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "execute", [options]);
+    exec(successCallback, errorCallback, "JJdbFile", "execute", [options, this.dbPath]);
 }
 
 module.exports = JJdbFile;
