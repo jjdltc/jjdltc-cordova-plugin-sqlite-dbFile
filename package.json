@@ -1,0 +1,29 @@
+{
+  "name": "cordova-sqlite-plugin",
+  "version": "1.0.0",
+  "description": "Connect to sqlite file and interact with it",
+  "cordova": {
+    "id": "com.jjdltc.cordova.plugin.sqlite",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "sqlite",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": {
+    "cordovaDependencies": {
+      "1.0.0": { 
+        "cordova" : ">=7.0.0",
+        "cordova-ios": ">=4.4.0"
+      }
+    }
+  },  
+  "author": "Joel De La Torriente <jjdltc@gmail.com> (https://github.com/jjdltc)",
+  "license": "MIT"
+}

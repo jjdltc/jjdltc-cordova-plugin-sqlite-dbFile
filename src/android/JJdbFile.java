@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class JJdbFile extends CordovaPlugin {
 
@@ -27,10 +28,6 @@ public class JJdbFile extends CordovaPlugin {
 //      , connect
 //      , disconnect        
     };
-    private JSONObject options      = null;
-    private String dbPath           = null;
-    private CallbackContext ctx     = null;
-    private SQLiteDatabase dbConn   = null;
     
     /**
      * Executes the request and returns PluginResult.
@@ -42,35 +39,63 @@ public class JJdbFile extends CordovaPlugin {
      */
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         boolean result          = true;
-        String actionType       = "";
-        this.options            = args.optJSONObject(0);
-        this.dbPath             = args.optString(1);
-        this.ctx                = callbackContext;
-        JSONArray resultData    = null;
+        JSONObject options      = args.optJSONObject(0);
+        boolean async           = args.optBoolean(1);
+        String dbPath           = args.optString(2);
+        CallbackContext ctx     = callbackContext;
         
-        result                  = this.verifyParams();
+        result                  = this.verifyParams(options, dbPath, ctx);
         
         switch (ACTIONS.valueOf(action)) {
             case create:
                 this.processResponse(callbackContext, false, "create Not Yet Implemented", null, null);
-                this.attemptToConnect(false);
             break;
             case read:
-                this.attemptToConnect(true);
-                resultData = this.read();
-                this.processResponse(callbackContext, true, "Consulta realizada", resultData, null);
+                ScheduleTask readTask = new ScheduleTask(options, dbPath, callbackContext){
+                    @Override
+                    public void run(){
+                        try {
+                            SQLiteDatabase dbConn = attemptToConnect(true, this.dbPath, this.ctx);
+                            this.resultData = read(dbConn, this.options);
+                            dbConn.close();
+                            processResponse(this.ctx, true, "Consulta realizada", resultData, null);                            
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                if(async){
+                    cordova.getThreadPool().execute(readTask);
+                }
+                else{
+                    cordova.getActivity().runOnUiThread(readTask);
+                }
             break;
             case update:
                 this.processResponse(callbackContext, false, "update Not Yet Implemented", null, null);
-                this.attemptToConnect(false);
             break;
             case delete:
                 this.processResponse(callbackContext, false, "delete Not Yet Implemented", null, null);
-                this.attemptToConnect(false);
             break;
             case execute:
-                this.processResponse(callbackContext, false, "execute Not Yet Implemented", null, null);
-                this.attemptToConnect(false);
+                ScheduleTask executeTask = new ScheduleTask(options, dbPath, callbackContext) {
+                    public void run(){
+                        try {
+                            SQLiteDatabase dbConn = attemptToConnect(false, this.dbPath, this.ctx);
+                            execute(dbConn, options);
+                            dbConn.close();
+                            processResponse(this.ctx, true, "SQL Executed", null, null);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                if(async){
+                    cordova.getThreadPool().execute(executeTask);
+                }
+                else{
+                    cordova.getActivity().runOnUiThread(executeTask);
+                }                
             break;
 //          case connect:
 //               
@@ -83,13 +108,9 @@ public class JJdbFile extends CordovaPlugin {
                 result = false;
             break;
         }
-        
-        if(this.dbConn.isOpen()){
-            this.dbConn.close();
-        }
 
-        String msg  = (result)?actionType+" Operation success":actionType+" Operation fail";
-        this.processResponse(callbackContext, result, msg, null, null);
+//        String msg  = (result)?actionType+" Operation success":actionType+" Operation fail";
+//        this.processResponse(callbackContext, result, msg, null, null);
         return result;
     }
 
@@ -119,41 +140,56 @@ public class JJdbFile extends CordovaPlugin {
         }
     }
     
-    private boolean verifyParams() throws JSONException{
+    private boolean verifyParams(JSONObject options, String dbPath, CallbackContext ctx) throws JSONException{
         boolean result      = true;
-        if(this.options==null || this.dbPath==null){
+        if(options==null || dbPath==null){
             result          = false;
-            String msg      = (this.options==null)?"option object":"database path";
-            this.processResponse(this.ctx, false, "Some parameters were missed - Missed "+msg+" -", null, null);
+            String msg      = (options==null)?"option object":"database path";
+            this.processResponse(ctx, false, "Some parameters were missed - Missed "+msg+" -", null, null);
         }
 
-        File dbFileCheck    = new File(this.dbPath);
+        File dbFileCheck    = new File(dbPath);
         if(!dbFileCheck.exists()){
             result          = false;
-            this.processResponse(this.ctx, false, "The selected db filed is missed", null, null);
+            this.processResponse(ctx, false, "The selected db filed is missed", null, null);
         }
         
         return result;
     }
     
-    private void attemptToConnect(boolean isReadOnly) throws JSONException{
+    private SQLiteDatabase attemptToConnect(boolean isReadOnly, String dbPath, CallbackContext ctx) throws JSONException{
         int openFlag            = (isReadOnly)?SQLiteDatabase.OPEN_READONLY:SQLiteDatabase.OPEN_READWRITE;
-        SQLiteDatabase dbConn   = SQLiteDatabase.openDatabase(this.dbPath, null, openFlag | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        SQLiteDatabase dbConn   = SQLiteDatabase.openDatabase(dbPath, null, openFlag | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 
         if(!dbConn.isOpen()){
-            this.processResponse(this.ctx, false, "Could not open the DB File", null, null);
+            this.processResponse(ctx, false, "Could not open the DB File", null, null);
         }
-        
-        this.dbConn             = dbConn;
+
+        return dbConn;
     }
     
-    private JSONArray read() throws JSONException{
+    private JSONArray read(SQLiteDatabase dbConn, JSONObject options) throws JSONException{
         queryBuilder qb         = new queryBuilder(this.cordova.getActivity().getApplicationContext());
-        String query            = qb.getQuery(this.options.optString("sqlFilePath"), this.options.optJSONArray("queryParams"));
-        Cursor result           = this.dbConn.rawQuery(query, null);
+        String query            = qb.getQuery(options.optString("sqlFilePath"), options.optJSONArray("queryParams"));
+        Cursor result           = dbConn.rawQuery(query, null);
         JSONArray data          = cursorToArray(result);
         
         return data;
+    }
+    
+    private void execute(SQLiteDatabase dbConn, JSONObject options){ 
+        queryBuilder qb         = new queryBuilder(this.cordova.getActivity().getApplicationContext());
+        String query            = qb.getQuery(options.optString("sqlFilePath"), options.optJSONArray("queryParams"));
+        String[] queryArr       = null;
+        if(options.optBoolean("multiple")){
+            queryArr            = query.split(";");
+        }
+        else{
+            queryArr            = new String[]{query};
+        }
+        for (String item : queryArr) {
+            dbConn.execSQL(item);
+        }
     }
     
     private JSONArray cursorToArray(Cursor cursor) throws JSONException{

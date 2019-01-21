@@ -5,12 +5,7 @@
  */
 
 var argscheck       = require('cordova/argscheck'),
-    exec            = require('cordova/exec'),
-    cordova         = require('cordova');
-
-var validateOptObj  = function(){
-
-};
+    exec            = require('cordova/exec');
 
 /**
  * @TODO Desc
@@ -22,60 +17,44 @@ function JJdbFile(path) {
     this.dbPath     = path || false;
 }
 
-// /**
-//  * Attemp to connect with the db file in the device
-//  */
-// JJdbFile.prototype.connect = function(options, successCallback, errorCallback) {
-//     argscheck.checkArgs('oFF', 'JJdbFile.connect', arguments);
-//     exec(successCallback, errorCallback, "JJdbFile", "connect", [options]);
-// };
-
-// /**
-//  * @TODO Desc
-//  */
-// JJdbFile.prototype.disconnect = function(options, successCallback, errorCallback) {
-//     argscheck.checkArgs('oFF', 'JJdbFile.disconnect', arguments);
-//     exec(successCallback, errorCallback, "JJdbFile", "disconnect", [options]);
-// };
-
 /**
  * @TODO Desc
  */
-JJdbFile.prototype.create = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.create', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "create", [options, this.dbPath]);
+JJdbFile.prototype.create = function(options, async, successCallback, errorCallback) {
+    argscheck.checkArgs('o*FF', 'JJdbFile.create', arguments);
+    exec(successCallback, errorCallback, "JJdbFile", "create", [options, async, this.dbPath]);
 }
 
 /**
  * @TODO Desc
  */
-JJdbFile.prototype.read = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.read', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "read", [options, this.dbPath]);
+JJdbFile.prototype.read = function(options, async, successCallback, errorCallback) {
+    argscheck.checkArgs('o*FF', 'JJdbFile.read', arguments);
+    exec(successCallback, errorCallback, "JJdbFile", "read", [options, async, this.dbPath]);
 }
 
 /**
  * @TODO Desc
  */
-JJdbFile.prototype.update = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.update', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "update", [options, this.dbPath]);
+JJdbFile.prototype.update = function(options, async, successCallback, errorCallback) {
+    argscheck.checkArgs('o*FF', 'JJdbFile.update', arguments);
+    exec(successCallback, errorCallback, "JJdbFile", "update", [options, async, this.dbPath]);
 }
 
 /**
  * @TODO Desc
  */
-JJdbFile.prototype.delete = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.delete', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "delete", [options, this.dbPath]);
+JJdbFile.prototype.delete = function(options, async, successCallback, errorCallback) {
+    argscheck.checkArgs('o*FF', 'JJdbFile.delete', arguments);
+    exec(successCallback, errorCallback, "JJdbFile", "delete", [options, async, this.dbPath]);
 }
 
 /**
  * @TODO Desc
  */
-JJdbFile.prototype.execute = function(options, successCallback, errorCallback) {
-    argscheck.checkArgs('oFF', 'JJdbFile.execute', arguments);
-    exec(successCallback, errorCallback, "JJdbFile", "execute", [options, this.dbPath]);
+JJdbFile.prototype.execute = function(options, async, successCallback, errorCallback) {
+    argscheck.checkArgs('o*FF', 'JJdbFile.execute', arguments);
+    exec(successCallback, errorCallback, "JJdbFile", "execute", [options, async, this.dbPath]);
 }
 
 module.exports = JJdbFile;
