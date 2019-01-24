@@ -1,67 +1,73 @@
-<!-- Sqlite File Plugin
+Sqlite File plugin
 ===
 
-A simple plugin to access to a Sqlite File in the device (Not to a sqlite db instatieted in the device)
+A simple plugin to access to a Sqlite File in the device (Not to a sqlite db instantiated in the device nor to create one)
+
+__Contributors are welcome.__
 
 Platforms supported
-
 * android
+* iOS (Partial)
 
-Easy Ese  
+
+Installation
+---
+
+`cordova plugin add cordova-sqlite-file-plugin`
+
+Easy Use  
 ---  
-  
+
 The object `JJdbFile` is expose in the `window`:
 
 ### Methonds
-
-create
-read
-update
-delete
-execute
-
-* `read(options, async [, successCallback, errorCallback])` - Allow to read over the db (Using a sql text file or sending the query itselft)
-    * `options` - Compression options in a JS object format (Key:"value")
-        * __target__: Path/To/Place/Result
-        * __name__: Name of the resulted zip (without the .zip)
-    * `async` - Flag to decide if the action will lock or not the main thread
-    * `successCallback` - Function to call in plugin success
-    * `errorCallback` - Function to call in plugin error
-* `unzip(file [, options, successCallback, errorCallback])` - Allow to unzip a zip file
-    * `file` - Path/To/File.zip (Expect a cordova style path file://)
-    * `options` - Extra options in a JS object format (Key:"value")
-        * __target__: Path/To/Place/Result
-    * `successCallback` - Function to call in plugin success
-    * `errorCallback` - Function to call in plugin error  
+* `read(options, async, successCallback, errorCallback)`
+    * `options` {Object} - 
+        * __useSqlFile__: {Boolean} - Define if use a SQL file or a SQL string
+        * __sqlFilePath__: {String} - Path to the SQL file (By now is relative to the asset folder)
+        * __queryParams__: {Array} - Params to replaces in the SQL sentence
+        * __multiple__: {Boolean} - If true, split the sentence in each `;` and execute in order
+    * `async` {Boolean} - Define if should use the main thread or not
+    * `successCallback` {Function} - Function to call in plugin success
+    * `errorCallback` {Function} - Function to call in plugin fail
+* `execute(options, async, successCallback, errorCallback)`
+    * `options` {Object} - 
+        * __useSqlFile__: {Boolean} - Define if use a SQL file or a SQL string
+        * __sqlFilePath__: {String} - Path to the SQL file (By now is relative to the asset folder)
+        * __queryParams__: {Array(String|Number)} - Params to replaces in the SQL sentence
+        * __multiple__: {Boolean} - If true, split the sentence in each `;` and execute in order
+    * `async` {Boolean} - Define if should use the main thread or not
+    * `successCallback` {Function} - Function to call in plugin success
+        * Params:
+            * __response__: {Object} -
+                * __success__: {Boolean} -
+                * __data__: {Any} -
+                * __message__: {String} - 
+    * `errorCallback` {Function} - Function to call in plugin fail
 
 ### Use Example  
 
-To Zip a folder
+To Read
 ```
-    var PathToFileInString  = cordova.file.externalRootDirectory+"HereIsMyFolder",
-        PathToResultZip     = cordova.file.externalRootDirectory;
-    JJzip.zip(PathToFileInString, {target:PathToResultZip,name:"SuperZip"},function(data){
-        /* Wow everiting goes good, but just in case verify data.success*/
-    },function(error){
-        /* Wow something goes wrong, check the error.message */
-    })
-```  
-
-Or To UnZip  
-
-```
-    var PathToFileInString  = cordova.file.externalRootDirectory+"HereIsMyFile.zip",
-        PathToResultZip     = cordova.file.externalRootDirectory;
-    JJzip.unzip(PathToFileInString, {target:PathToResultZip},function(data){
-        /* Wow everything goes good, but just in case verify data.success */
-    },function(error){
-        /* Wow something goes wrong, check the error.message */
-    })
+var dbFile      = new JJdbFile("path/to/db/file");
+dbFile.read({
+    useSqlFile  : true
+    sqlFilePath : "Path/To/SQL/File"
+    queryParams : []
+    multiple    : false
+}, true, function(response){
+    if(response.success){
+        console.log("All Ok")
+    }
+    console.log("Not Ok, success false")
+}, function(){
+    console.log("Not Ok, fail")
+})
 ```
 
 There is a big TODO list, but in resume  
   
 * Write a better documentation
-* Add iOS Support (Be Patient)
-
-need to place a the queries in assets (preferred in a folder) -->
+* Support the queries file locations in others locations and not just assets
+* Allow to use SQL sentence (Not just file)
+* It could be valid to connect with an instance (Thinking)

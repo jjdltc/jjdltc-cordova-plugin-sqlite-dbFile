@@ -1,6 +1,6 @@
 {
   "name": "cordova-sqlite-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Connect to sqlite file and interact with it",
   "cordova": {
     "id": "com.jjdltc.cordova.plugin.sqlite",
@@ -18,7 +18,7 @@
   ],
   "engines": {
     "cordovaDependencies": {
-      "1.0.0": { 
+      "1.1.0": { 
         "cordova" : ">=7.0.0",
         "cordova-ios": ">=4.4.0"
       }
