@@ -45,7 +45,16 @@ See a full copy of license in the root folder of the project
         <source-file src="src/ios/JJdbFile.m" />
         <source-file src="src/ios/queryBuilder.h" />
         <source-file src="src/ios/queryBuilder.m" />
+<!--         <framework src="FMDB" type="podspec" spec="~> 2.7.4" /> -->
 
-        <framework src="FMDB" type="podspec" spec="~> 2.7.4" />
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="FMDB" spec="~> 2.7.4" />
+            </pods>
+        </podspec>
+
     </platform>
 </plugin>
